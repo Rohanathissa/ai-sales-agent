@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import api from "../utils/api";
 import { useAuth } from "../context/AuthContext";
@@ -6,6 +7,7 @@ import { useAuth } from "../context/AuthContext";
 function Dashboard() {
   const { user } = useAuth();
   const businessId = user?.business_id;
+  const location = useLocation();
 
   // ===== MANAGERS STATE =====
   const [managers, setManagers] = useState([]);
@@ -75,6 +77,18 @@ function Dashboard() {
       fetchProducts(1);
     }
   }, [businessId]);
+
+  useEffect(() => {
+    if (location.hash) {
+      const id = location.hash.replace("#", "");
+      const el = document.getElementById(id);
+      if (el) {
+        setTimeout(() => {
+          el.scrollIntoView({ behavior: "smooth" });
+        }, 150);
+      }
+    }
+  }, [location.hash]);
 
   // ===== MANAGER HANDLERS =====
   const openAddManagerModal = () => {
@@ -255,7 +269,7 @@ function Dashboard() {
           </div>
 
           {/* PRODUCT MANAGERS */}
-          <section className="section">
+          <section className="section" id="managers-section">
             <div className="section-header">
               <div>
                 <h2 className="section-title">Product Managers</h2>
@@ -312,7 +326,7 @@ function Dashboard() {
           </section>
 
           {/* PRODUCTS */}
-          <section className="section">
+          <section className="section" id="products-section">
             <div className="section-header">
               <div>
                 <h2 className="section-title">Product Inventory</h2>

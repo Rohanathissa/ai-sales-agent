@@ -48,6 +48,7 @@ ${rulesList}
 Guidelines:
 - Keep replies short and conversational (WhatsApp style, 2-4 sentences max)
 - Use the currency ${business.currency} when quoting prices
+- LANGUAGE SUPPORT: Respond in the exact language used by the customer. If the customer messages in Sinhala (සිංහල) or Singlish, understand their request accurately, match it against the English product catalog details above, and reply in polite, clear Sinhala with accurate product meanings and pricing. If they message in English, reply in English.
 - If a customer asks something you don't have info on, offer to connect them with a human team member
 - Never make up product details or prices not listed above
 - Be warm and helpful, not robotic`;
@@ -60,25 +61,56 @@ Guidelines:
 async function generateReply(businessId, conversationHistory, newMessage) {
   const systemPrompt = await buildSystemPrompt(businessId);
 
-const model = genAI.getGenerativeModel({
-  model: 'gemini-3.6-flash',
-  systemInstruction: systemPrompt,
-});
+  const fallbackModels = [
+    process.env.GEMINI_MODEL || 'gemini-3.6-flash',
+    'gemini-3.6-flash',
+    'gemini-3.7-flash',
+    'gemini-flash-latest',
+    'gemini-3.5-flash',
+  ];
 
-  // Gemini requires the history to start with a 'user' turn, and roles must alternate.
-  // We map sender_type -> Gemini roles ('user' for customer, 'model' for ai/human replies).
-  const history = conversationHistory
-    .map((msg) => ({
-      role: msg.sender_type === 'customer' ? 'user' : 'model',
+  // Filter and map conversation history to ensure valid alternating Gemini format starting with 'user'
+  const sanitizedHistory = [];
+  let lastRole = null;
+
+  for (const msg of conversationHistory) {
+    const role = msg.sender_type === 'customer' ? 'user' : 'model';
+    if (sanitizedHistory.length === 0 && role !== 'user') continue;
+    if (role === lastRole) continue;
+
+    sanitizedHistory.push({
+      role,
       parts: [{ text: msg.content }],
-    }));
+    });
+    lastRole = role;
+  }
 
-  const chat = model.startChat({ history });
+  // Gemini startChat history MUST end with 'model' so that chat.sendMessage(newMessage) is a valid 'user' turn!
+  if (sanitizedHistory.length > 0 && sanitizedHistory[sanitizedHistory.length - 1].role === 'user') {
+    sanitizedHistory.pop();
+  }
 
-  const result = await chat.sendMessage(newMessage);
-  const replyText = result.response.text();
+  let lastError = null;
 
-  return replyText || "I'm sorry, I couldn't generate a response right now.";
+  for (const mName of [...new Set(fallbackModels)]) {
+    try {
+      const model = genAI.getGenerativeModel({
+        model: mName,
+        systemInstruction: systemPrompt,
+      });
+      const chat = model.startChat({ history: sanitizedHistory });
+      const result = await chat.sendMessage(newMessage);
+      const replyText = result.response.text();
+      if (replyText) {
+        return replyText;
+      }
+    } catch (err) {
+      console.warn(`Model ${mName} error: ${err.message}. Trying next fallback...`);
+      lastError = err;
+    }
+  }
+
+  throw lastError || new Error('All Gemini model fallbacks failed.');
 }
 
 module.exports = { generateReply, buildSystemPrompt };

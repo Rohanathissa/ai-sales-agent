@@ -1,76 +1,168 @@
 -- ============================================================
--- SAMPLE SEED DATA — Ceylon Crown Gems
--- Run this after schema.sql
+-- CLEAN SEED DATA — ADMIN ONLY
+-- Cleans out sample data and initializes standard Admin user
 -- ============================================================
 
+TRUNCATE TABLE messages, conversations, customers, products, business_rules, users, businesses RESTART IDENTITY CASCADE;
+
+-- Default Business
 INSERT INTO businesses
-(name, business_type, description, email, phone, whatsapp_number, country, currency)
+(id, name, business_type, description, email, phone, whatsapp_number, country, currency, ai_enabled, status)
 VALUES
 (
-    'Ceylon Crown Gems',
+    1,
+    'GemConnect Business',
     'Gem & Jewellery',
-    'Premium Ceylon gemstones and jewellery business',
-    'sales@ceyloncrowngems.com',
+    'GemConnect sales management platform business account',
+    'admin@gemconnect.lk',
     '+94770000000',
     '+94770000000',
     'Sri Lanka',
-    'USD'
+    'USD',
+    TRUE,
+    'active'
 );
 
+SELECT setval('businesses_id_seq', (SELECT MAX(id) FROM businesses));
+
+-- Default Admin User (Email: admin@gemconnect.lk | Password: admin123)
+INSERT INTO users
+(business_id, name, email, password_hash, role, is_active)
+VALUES
+(
+    1,
+    'System Admin',
+    'admin@gemconnect.lk',
+    '$2b$10$kPlmwZqXCOIFwGSdXSOef.ph8m0KZErEFNxfXbmSvF2y1FYLU2lMC',
+    'ADMIN',
+    TRUE
+);
+
+-- Sample Gem & Jewellery Products for Business 1
 INSERT INTO products
-(business_id, sku, name, category, description, price, currency, attributes, stock_status)
+(business_id, sku, name, category, description, price, currency, attributes, stock_status, is_active)
 VALUES
-(1, 'GS-0001', 'Ceylon Blue Sapphire 4.12ct', 'Blue Sapphire',
- 'Natural Ceylon blue sapphire with excellent colour.', 4800.00, 'USD',
- '{"gem_type":"Blue Sapphire","origin":"Ceylon","weight_ct":4.12,"treatment":"Unheated","color":"Blue","shape":"Oval","certificate":"GIA","clarity":"Eye Clean","availability":"Available"}',
- 'available'),
+(
+    1,
+    'GEM-SAP-001',
+    'Royal Blue Ceylon Sapphire',
+    'Sapphire',
+    'Unheated natural Ceylon royal blue sapphire with exceptional clarity and rich color saturation. Ideal for custom luxury ring settings.',
+    3500.00,
+    'USD',
+    '{"weight_carats": 2.45, "color": "Royal Blue", "cut": "Cushion", "clarity": "VVS", "origin": "Ratnapura, Sri Lanka", "treatment": "Unheated", "certification": "GIA Certified"}'::jsonb,
+    'available',
+    TRUE
+),
+(
+    1,
+    'GEM-PAD-002',
+    'Natural Padparadscha Sapphire',
+    'Sapphire',
+    'Rare Sri Lankan Padparadscha sapphire exhibiting a perfect blend of delicate pink and orange tones.',
+    5200.00,
+    'USD',
+    '{"weight_carats": 1.80, "color": "Pinkish-Orange", "cut": "Oval", "clarity": "VVS", "origin": "Balangoda, Sri Lanka", "treatment": "Natural / Unheated", "certification": "GRS Certified"}'::jsonb,
+    'available',
+    TRUE
+),
+(
+    1,
+    'GEM-RUB-003',
+    'Pigeon Blood Ruby',
+    'Ruby',
+    'Vibrant natural pigeon blood red ruby with vivid fluorescence and outstanding luster.',
+    4800.00,
+    'USD',
+    '{"weight_carats": 1.20, "color": "Pigeon Blood Red", "cut": "Oval Brilliant", "clarity": "VS", "origin": "Burma (Myanmar)", "treatment": "Standard Heat", "certification": "SSEF Certified"}'::jsonb,
+    'available',
+    TRUE
+),
+(
+    1,
+    'GEM-EME-004',
+    'Colombian Emerald',
+    'Emerald',
+    'Classic Colombian emerald displaying a deep lush green hue with minor traditional oiling.',
+    3200.00,
+    'USD',
+    '{"weight_carats": 1.55, "color": "Vivid Green", "cut": "Emerald Cut", "clarity": "VS", "origin": "Muzo, Colombia", "treatment": "Minor Clarity Enhancement (Oil)", "certification": "GIA Certified"}'::jsonb,
+    'available',
+    TRUE
+),
+(
+    1,
+    'GEM-ALX-005',
+    'Color-Change Alexandrite',
+    'Alexandrite',
+    'Remarkable color-changing chrysoberyl transitioning from teal green in daylight to intense raspberry red under incandescent light.',
+    6500.00,
+    'USD',
+    '{"weight_carats": 1.10, "color": "Teal Green to Raspberry Red", "cut": "Round Cut", "clarity": "VVS", "origin": "Sri Lanka", "treatment": "Unheated / Untreated", "certification": "GUBELIN Certified"}'::jsonb,
+    'available',
+    TRUE
+),
+(
+    1,
+    'GEM-SPN-006',
+    'Cobalt Blue Spinel',
+    'Spinel',
+    'Ultra-rare electric cobalt blue spinel with vivid color intensity and excellent transparency.',
+    2900.00,
+    'USD',
+    '{"weight_carats": 2.10, "color": "Electric Cobalt Blue", "cut": "Cushion", "clarity": "VVS", "origin": "Mahenge, Tanzania", "treatment": "Untreated", "certification": "ICA GemLab"}'::jsonb,
+    'available',
+    TRUE
+),
+(
+    1,
+    'GEM-TSV-007',
+    'Tsavorite Garnet',
+    'Garnet',
+    'Brilliant forest green Tsavorite Garnet with high refractive index and sparkling optical fire.',
+    1850.00,
+    'USD',
+    '{"weight_carats": 2.05, "color": "Forest Green", "cut": "Oval", "clarity": "VVS", "origin": "Kenya", "treatment": "Untreated", "certification": "GIA Certified"}'::jsonb,
+    'available',
+    TRUE
+),
+(
+    1,
+    'GEM-YSAP-008',
+    'Canary Yellow Ceylon Sapphire',
+    'Sapphire',
+    'Bright golden-yellow Ceylon sapphire with radiant facets reflecting brilliant yellow flashes.',
+    2400.00,
+    'USD',
+    '{"weight_carats": 3.10, "color": "Canary Yellow", "cut": "Radiant Cut", "clarity": "VVS", "origin": "Elahera, Sri Lanka", "treatment": "Unheated", "certification": "GIA Certified"}'::jsonb,
+    'available',
+    TRUE
+),
+(
+    1,
+    'JWL-RNG-009',
+    'Diamond & Sapphire Solitaire Ring',
+    'Rings',
+    'Handcrafted 18K white gold engagement ring featuring a 2.0 ct Royal Blue Ceylon Sapphire surrounded by a pavé diamond halo.',
+    4500.00,
+    'USD',
+    '{"center_gem": "Royal Blue Sapphire", "metal": "18K White Gold", "diamond_weight_carats": 0.45, "ring_size": "US 6.5 (Resizable)", "certification": "In-house Appraisal & GIA Gem Cert"}'::jsonb,
+    'available',
+    TRUE
+),
+(
+    1,
+    'JWL-PND-010',
+    'Padparadscha Rose Gold Pendant',
+    'Pendants',
+    'Elegant 18K Rose Gold pendant featuring a natural Padparadscha gemstone set in a halo of brilliant round white diamonds.',
+    3800.00,
+    'USD',
+    '{"center_gem": "Padparadscha Sapphire", "metal": "18K Rose Gold", "diamond_weight_carats": 0.30, "chain_length": "18 inches", "certification": "GRS Gem Cert"}'::jsonb,
+    'available',
+    TRUE
+);
 
-(1, 'GS-0002', 'Ceylon Blue Sapphire 3.65ct', 'Blue Sapphire',
- 'Natural Ceylon blue sapphire suitable for jewellery.', 3900.00, 'USD',
- '{"gem_type":"Blue Sapphire","origin":"Ceylon","weight_ct":3.65,"treatment":"Unheated","color":"Blue","shape":"Cushion","certificate":"GIA","clarity":"Very Good","availability":"Available"}',
- 'available'),
+SELECT setval('products_id_seq', (SELECT MAX(id) FROM products));
 
-(1, 'GS-0003', 'Ceylon Blue Sapphire 5.20ct', 'Blue Sapphire',
- 'Natural Ceylon blue sapphire with strong blue colour.', 4500.00, 'USD',
- '{"gem_type":"Blue Sapphire","origin":"Ceylon","weight_ct":5.20,"treatment":"Heated","color":"Blue","shape":"Oval","certificate":"Available","clarity":"Good","availability":"Available"}',
- 'available'),
 
-(1, 'GS-0004', 'Ceylon Yellow Sapphire 3.10ct', 'Yellow Sapphire',
- 'Natural Ceylon yellow sapphire.', 2800.00, 'USD',
- '{"gem_type":"Yellow Sapphire","origin":"Ceylon","weight_ct":3.10,"treatment":"Unheated","color":"Yellow","shape":"Oval","certificate":"Available","availability":"Available"}',
- 'available'),
-
-(1, 'GS-0005', 'Ceylon Padparadscha Sapphire 2.05ct', 'Padparadscha Sapphire',
- 'Natural Ceylon Padparadscha sapphire.', 6500.00, 'USD',
- '{"gem_type":"Padparadscha Sapphire","origin":"Ceylon","weight_ct":2.05,"treatment":"Unheated","color":"Pink Orange","shape":"Oval","certificate":"GIA","availability":"Available"}',
- 'available');
-
-INSERT INTO customers
-(business_id, name, phone, whatsapp_number, email, country, preferred_language, budget_min, budget_max, currency, interests, lead_status)
-VALUES
-(1, 'John Smith', '+15550000001', '+15550000001', 'john@example.com', 'USA', 'en',
- 3000.00, 5000.00, 'USD',
- '{"gem_type":"Blue Sapphire","origin":"Ceylon","treatment":"Unheated","min_weight_ct":3,"max_weight_ct":5}',
- 'warm');
-
-INSERT INTO conversations
-(business_id, customer_id, channel, status, ai_enabled, lead_score, summary, last_message_at)
-VALUES
-(1, 1, 'whatsapp', 'active', TRUE, 75,
- 'Customer is looking for a 3-5ct unheated Ceylon blue sapphire under $5,000.',
- CURRENT_TIMESTAMP);
-
-INSERT INTO messages
-(conversation_id, sender_type, message_type, content, ai_generated)
-VALUES
-(1, 'customer', 'text', 'Do you have a 4ct unheated Ceylon blue sapphire under $5,000?', FALSE),
-(1, 'ai', 'text', 'Yes. I found matching Ceylon blue sapphires. The closest match is a 4.12ct unheated stone priced at $4,800. Would you like to see the details?', TRUE),
-(1, 'customer', 'text', 'Is it certified?', FALSE),
-(1, 'ai', 'text', 'Yes. The 4.12ct stone has a GIA certificate recorded in our product information.', TRUE);
-
-INSERT INTO business_rules
-(business_id, rule_name, rule_type, rule_value)
-VALUES
-(1, 'Maximum Discount', 'discount_limit', '{"max_percentage": 5}'),
-(1, 'Human Handover', 'handover', '{"enabled": true, "conditions": ["customer_requests_special_discount","customer_has_complaint","high_value_transaction","ai_uncertain"]}'),
-(1, 'Certificate Policy', 'product_information', '{"rule": "Never claim a certificate exists unless it is recorded in product data."}');

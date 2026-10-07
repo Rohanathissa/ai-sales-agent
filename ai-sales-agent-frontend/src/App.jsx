@@ -4,6 +4,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import ChatSimulator from './pages/ChatSimulator';
+import UserManual from './pages/UserManual';
 
 function App() {
   return (
@@ -23,11 +24,19 @@ function App() {
           <Route
             path="/chat-simulator"
             element={
-          <ProtectedRoute>
-      <ChatSimulator />
-    </ProtectedRoute>
-  }
-/>
+              <ProtectedRoute>
+                <ChatSimulator />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/user-manual"
+            element={
+              <ProtectedRoute>
+                <UserManual />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

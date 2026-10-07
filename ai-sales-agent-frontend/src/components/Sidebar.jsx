@@ -1,9 +1,10 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 function Sidebar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
     logout();
@@ -21,13 +22,49 @@ function Sidebar() {
       .slice(0, 2);
   };
 
+  const isProductsActive = location.pathname === '/dashboard' && location.hash === '#products-section';
+  const isManagersActive = location.pathname === '/dashboard' && location.hash === '#managers-section';
+  const isChatActive = location.pathname === '/chat-simulator';
+  const isManualActive = location.pathname === '/user-manual';
+  const isDashboardActive = location.pathname === '/dashboard' && !isProductsActive && !isManagersActive;
+
+  const handleDashboardClick = () => {
+    if (location.pathname === '/dashboard') {
+      window.history.pushState(null, '', '/dashboard');
+      const mainContent = document.querySelector('.content');
+      if (mainContent) mainContent.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      navigate('/dashboard');
+    }
+  };
+
+  const handleProductsClick = () => {
+    if (location.pathname === '/dashboard') {
+      window.location.hash = '#products-section';
+      const el = document.getElementById('products-section');
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      navigate('/dashboard#products-section');
+    }
+  };
+
+  const handleManagersClick = () => {
+    if (location.pathname === '/dashboard') {
+      window.location.hash = '#managers-section';
+      const el = document.getElementById('managers-section');
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      navigate('/dashboard#managers-section');
+    }
+  };
+
   return (
     <aside className="sidebar">
 
       <div>
 
         {/* Logo */}
-        <div className="logo">
+        <div className="logo" style={{ cursor: 'pointer' }} onClick={handleDashboardClick}>
           <div className="logo-icon">B</div>
 
           <span className="logo-name">
@@ -38,19 +75,18 @@ function Sidebar() {
         {/* Navigation */}
         <nav className="nav">
 
-          <button className="nav-item active" onClick={() => navigate('/dashboard')}>
+          <button className={`nav-item ${isDashboardActive ? 'active' : ''}`} onClick={handleDashboardClick}>
             <span className="nav-icon">📊</span>
             <span>Dashboard</span>
           </button>
 
-          <button className="nav-item">
+          <button className={`nav-item ${isProductsActive ? 'active' : ''}`} onClick={handleProductsClick}>
             <span className="nav-icon">📦</span>
             <span>Products</span>
           </button>
 
-          <button className="nav-item">
+          <button className={`nav-item ${isManagersActive ? 'active' : ''}`} onClick={handleManagersClick}>
             <span className="nav-icon">👥</span>
-
             <span>Product Managers</span>
 
             <span className="admin-badge">
@@ -58,16 +94,16 @@ function Sidebar() {
             </span>
           </button>
 
-          <button className="nav-item">
-            <span className="nav-icon">⚙️</span>
-            <span>Settings</span>
+          <button className={`nav-item ${isChatActive ? 'active' : ''}`} onClick={() => navigate('/chat-simulator')}>
+            <span className="nav-icon">💬</span>
+            <span>Chat Simulator</span>
           </button>
 
+          <button className={`nav-item ${isManualActive ? 'active' : ''}`} onClick={() => navigate('/user-manual')}>
+            <span className="nav-icon">📖</span>
+            <span>User Manual</span>
+          </button>
         </nav>
-        <button className="nav-item" onClick={() => navigate('/chat-simulator')}>
-          <span className="nav-icon">💬</span>
-          <span>Chat Simulator</span>
-        </button>
       </div>
 
       {/* User */}
@@ -102,4 +138,4 @@ function Sidebar() {
   );
 }
 
-export default Sidebar;
+export default Sidebar;

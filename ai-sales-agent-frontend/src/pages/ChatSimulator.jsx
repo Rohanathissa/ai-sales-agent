@@ -55,11 +55,28 @@ function ChatSimulator() {
   };
 
   useEffect(() => {
-    if (businessId) fetchConversations();
+    if (!businessId) return;
+    fetchConversations();
+    const interval = setInterval(() => {
+      api.get(`/businesses/${businessId}/conversations`)
+        .then((res) => setConversations(res.data))
+        .catch(() => {});
+    }, 3000);
+    return () => clearInterval(interval);
   }, [businessId]);
 
   useEffect(() => {
-    if (selectedConvId) fetchThread(selectedConvId);
+    if (!selectedConvId) return;
+    fetchThread(selectedConvId);
+    const interval = setInterval(() => {
+      api.get(`/conversations/${selectedConvId}`)
+        .then((res) => {
+          setConversation(res.data);
+          setMessages(res.data.messages);
+        })
+        .catch(() => {});
+    }, 3000);
+    return () => clearInterval(interval);
   }, [selectedConvId]);
 
   useEffect(() => {

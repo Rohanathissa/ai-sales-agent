@@ -12,6 +12,7 @@ const authRouter = require('./routes/auth');
 const { authenticate } = require('./middleware/auth');
 const { notFoundHandler, errorHandler } = require('./middleware/errorHandler');
 const usersRouter = require('./routes/users');
+const whatsappWebhookRouter = require('./routes/whatsappWebhook');
 
 const app = express();
 
@@ -20,6 +21,38 @@ app.use(express.json());
 
 // Health check - public
 app.get('/health', (req, res) => res.json({ status: 'ok' }));
+
+// Public Privacy Policy & Terms of Service for Meta App verification
+app.get('/privacy', (req, res) => {
+  res.send(`<!DOCTYPE html>
+<html>
+<head><title>Privacy Policy - GemConnect AI Sales Agent</title></head>
+<body style="font-family: sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; line-height: 1.6;">
+  <h1>Privacy Policy</h1>
+  <p>Last updated: October 2026</p>
+  <p>GemConnect AI Sales Agent respects your privacy. This policy describes how we collect and use data when communicating via WhatsApp.</p>
+  <h2>Data Collection</h2>
+  <p>We collect contact information (phone numbers) and customer chat messages solely to answer inquiries regarding gem catalog products and prices.</p>
+  <h2>Data Protection</h2>
+  <p>We do not sell, rent, or distribute personal information to any third parties.</p>
+  <p>Contact: support@gemconnect.lk</p>
+</body>
+</html>`);
+});
+
+app.get('/terms', (req, res) => {
+  res.send(`<!DOCTYPE html>
+<html>
+<head><title>Terms of Service - GemConnect</title></head>
+<body style="font-family: sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; line-height: 1.6;">
+  <h1>Terms of Service</h1>
+  <p>GemConnect provides AI-driven customer inquiry responses for gem and jewellery products.</p>
+</body>
+</html>`);
+});
+
+// WhatsApp Meta Webhook - public (verified by token)
+app.use('/api/whatsapp/webhook', whatsappWebhookRouter);
 
 // Auth routes - public (no token needed to register/login)
 app.use('/api/auth', authRouter);
