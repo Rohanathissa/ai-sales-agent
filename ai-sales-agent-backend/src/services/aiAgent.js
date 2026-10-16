@@ -1,7 +1,17 @@
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const pool = require('../db/pool');
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+let genAI;
+
+function getGenAI() {
+  if (!process.env.GEMINI_API_KEY) {
+    throw new Error('GEMINI_API_KEY is not set');
+  }
+  if (!genAI) {
+    genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+  }
+  return genAI;
+}
 
 /**
  * Builds a system prompt for the AI using the business's products and rules.
@@ -94,7 +104,7 @@ async function generateReply(businessId, conversationHistory, newMessage) {
 
   for (const mName of [...new Set(fallbackModels)]) {
     try {
-      const model = genAI.getGenerativeModel({
+      const model = getGenAI().getGenerativeModel({
         model: mName,
         systemInstruction: systemPrompt,
       });

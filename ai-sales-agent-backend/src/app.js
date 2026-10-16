@@ -1,3 +1,5 @@
+const path = require('path');
+const fs = require('fs');
 const express = require('express');
 const cors = require('cors');
 
@@ -16,6 +18,8 @@ const whatsappWebhookRouter = require('./routes/whatsappWebhook');
 
 const app = express();
 
+// CapRover terminates TLS and forwards plain HTTP.
+app.set('trust proxy', 1);
 app.use(cors());
 app.use(express.json());
 
@@ -67,6 +71,22 @@ app.use('/api/businesses/:businessId/users', authenticate, usersRouter);
 
 app.use('/api/conversations/:conversationId/messages', authenticate, messagesRouter);
 app.use('/api/conversations', authenticate, conversationDetailRouter);
+
+// Built UI is copied to ./public in the CapRover image. Absent in local API-only runs.
+const frontendDist = process.env.FRONTEND_DIST || path.join(__dirname, '..', 'public');
+const frontendIndex = path.join(frontendDist, 'index.html');
+
+if (fs.existsSync(frontendIndex)) {
+  app.use(express.static(frontendDist));
+  app.use((req, res, next) => {
+    if (req.method !== 'GET' && req.method !== 'HEAD') return next();
+    if (req.path.startsWith('/api')) return next();
+    if (path.extname(req.path)) return next();
+    res.sendFile(frontendIndex, (err) => {
+      if (err) next(err);
+    });
+  });
+}
 
 app.use(notFoundHandler);
 app.use(errorHandler);
