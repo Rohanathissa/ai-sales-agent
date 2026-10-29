@@ -1,5 +1,7 @@
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const pool = require('../db/pool');
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../../.env'), override: true });
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 

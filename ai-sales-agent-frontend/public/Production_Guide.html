@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+  <meta charset="UTF-8">
+  <title>AI Sales Agent Platform — Production & Stability Guide</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Noto+Sans+Sinhala:wght@400;600;700&display=swap');
+    body {
+      font-family: 'Inter', 'Noto Sans Sinhala', 'Nirmala UI', 'Iskoola Pota', -apple-system, sans-serif;
+      max-width: 860px;
+      margin: 40px auto;
+      padding: 0 24px 60px;
+      color: #1e293b;
+      line-height: 1.65;
+      background: #f8fafc;
+    }
+    .paper-card {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 48px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+    .doc-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      color: #2563eb;
+      background: #eff6ff;
+      padding: 4px 12px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+    h1 {
+      font-size: 26px;
+      font-weight: 800;
+      color: #0f172a;
+      margin: 0 0 8px 0;
+      line-height: 1.3;
+    }
+    .doc-sub {
+      font-size: 13.5px;
+      color: #64748b;
+      margin-bottom: 28px;
+      border-bottom: 2px solid #f1f5f9;
+      padding-bottom: 20px;
+    }
+    h2 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #0f172a;
+      margin: 28px 0 10px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    h2 span {
+      color: #2563eb;
+      font-size: 15px;
+    }
+    p {
+      margin: 0 0 14px 0;
+      font-size: 14.5px;
+      color: #334155;
+    }
+    ul {
+      margin: 0 0 18px 20px;
+      padding: 0;
+    }
+    li {
+      margin-bottom: 8px;
+      font-size: 14px;
+      color: #334155;
+    }
+    li strong {
+      color: #0f172a;
+    }
+    .sinhala-trans {
+      display: block;
+      color: #64748b;
+      font-size: 13.5px;
+      margin-top: 2px;
+    }
+    .callout {
+      background: #f0fdf4;
+      border-left: 4px solid #10b981;
+      padding: 14px 18px;
+      border-radius: 8px;
+      margin: 16px 0;
+      font-size: 13.5px;
+      color: #166534;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 13.5px;
+    }
+    th, td {
+      border: 1px solid #e2e8f0;
+      padding: 10px 14px;
+      text-align: left;
+    }
+    th {
+      background: #0f172a;
+      color: white;
+      font-weight: 600;
+    }
+    tr:nth-child(even) {
+      background: #f8fafc;
+    }
+    .print-btn-bar {
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+    .btn {
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: none;
+    }
+    .btn-primary { background: #2563eb; color: white; }
+    .btn-secondary { background: #e2e8f0; color: #1e293b; }
+    @media print {
+      body { background: white; margin: 0; padding: 0; }
+      .paper-card { border: none; box-shadow: none; padding: 0; }
+      .print-btn-bar { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="print-btn-bar">
+    <button class="btn btn-primary" onclick="window.print()">🖨️ Print / Save as PDF</button>
+    <a class="btn btn-secondary" href="/AI_Sales_Agent_Production_Guide_v2.docx" download>📥 Download Word (.docx)</a>
+  </div>
+
+  <div class="paper-card">
+    <span class="doc-badge">ENTERPRISE DEPLOYMENT DOCUMENTATION</span>
+    <h1>AI Sales Agent Platform — Production & Stability Guide</h1>
+    <div class="doc-sub">
+      Autonomous Multilingual WhatsApp Commerce Powered by Meta Cloud API & Google Gemini AI<br>
+      (සැබෑ වෙළඳසැලක් වෙනුවෙන් 24/7 ස්ථාවරව ක්‍රියාත්මක කරවීමේ සම්පූර්ණ නිල මාර්ගෝපදේශය)
+    </div>
+
+    <h2>1. Executive Summary <span>(විධායක සාරාංශය)</span></h2>
+    <p>
+      මෙම ලියවිල්ල මඟින් දැනට Local Development (පරීක්ෂණ මට්ටමේ) පවතින AI Sales Agent පද්ධතිය, සැබෑ මැණික් සහ ස්වර්ණාභරණ වෙළඳසැලක් වෙනුවෙන් පැය 24 පුරාම ස්ථිරව, ආරක්ෂිතව සහ බාධාවකින් තොරව (Production-Grade) ක්‍රියාත්මක කිරීමට අවශ්‍ය තාක්ෂණික පියවර විස්තර කරයි.
+    </p>
+
+    <h2>2. Meta Permanent Access Token <span>(Token Expire වීම වැළැක්වීම)</span></h2>
+    <p>
+      Developer Portal එකෙන් දෙන Temporary Token එක පැය 24 කින් Expire වන නිසා (Code 190 OAuthException), කවදාවත් expire නොවන System User Token එකක් මෙසේ ලබාගන්න:
+    </p>
+    <ul>
+      <li><strong>Step 1 (Login):</strong> Go to Meta Business Suite <span class="sinhala-trans">↪ business.facebook.com වෙත Login වන්න.</span></li>
+      <li><strong>Step 2 (System Users):</strong> Settings ➔ Users ➔ System Users <span class="sinhala-trans">↪ සැකසුම් මෙනුවෙන් System Users වෙත පිවිසෙන්න.</span></li>
+      <li><strong>Step 3 (Create User):</strong> Add Admin System User <span class="sinhala-trans">↪ නව Admin System User කෙනෙකු සාදන්න (උදා: GemConnect-Bot).</span></li>
+      <li><strong>Step 4 (Assign Assets):</strong> Full Control on WABA & App <span class="sinhala-trans">↪ WhatsApp Business Account සහ App එක තෝරා Full Control අවසර දෙන්න.</span></li>
+      <li><strong>Step 5 (Generate Token):</strong> Expiration = <strong>'Never'</strong> <span class="sinhala-trans">↪ Expiration කාලය 'Never' (කවදාවත් Expire නොවන ලෙස) තෝරන්න.</span></li>
+      <li><strong>Step 6 (Scopes):</strong> Check <code>whatsapp_business_messaging</code> & <code>whatsapp_business_management</code>.</li>
+      <li><strong>Step 7 (Result):</strong> මෙම Token එක කවදාවත් expire නොවේ.</li>
+    </ul>
+
+    <h2>3. Real Store Phone Number Integration <span>(සැබෑ Store අංකය සම්බන්ධ කිරීම)</span></h2>
+    <ul>
+      <li><strong>Dedicated SIM:</strong> වෙළඳසැල වෙනුවෙන් අලුත් SIM පතක් වෙන් කරගන්න (උදා: +94 77 XXX XXXX).</li>
+      <li><strong>Crucial Rule:</strong> මෙම අංකය සාමාන්‍ය WhatsApp App එකේ Register වී නොතිබිය යුතුය. තිබේ නම් Delete Account කරන්න.</li>
+      <li><strong>Add to Meta:</strong> Developer Portal ➔ WhatsApp ➔ API Setup ➔ Add Phone Number වෙත ගොස් අංකය එක්කරන්න.</li>
+      <li><strong>Verification:</strong> Display Name එක ('GemConnect Official') ලබාදී SMS OTP මඟින් Verify කරගන්න.</li>
+    </ul>
+
+    <h2>4. 24/7 Cloud Server Hosting <span>(ස්ථිර Cloud Hosting)</span></h2>
+    <p>පරිගණකය ක්‍රියාවිරහිත කළ විට පද්ධතිය නතර වන බැවින්, ස්ථිර Cloud Server එකක මෙසේ Run කරන්න:</p>
+    <ul>
+      <li><strong>Render.com හෝ Railway.app:</strong> Node.js Backend සහ Managed PostgreSQL Database එක 24/7 ධාවනය වේ ($5-$7/මසකට).</li>
+      <li><strong>Permanent Custom Domain:</strong> <code>https://api.gemconnect.lk/api/whatsapp/webhook</code> ස්ථිර SSL ලිපිනය ලැබේ.</li>
+    </ul>
+
+    <h2>5. Google Gemini AI Engine — Production Tier <span>(Paid Tier)</span></h2>
+    <ul>
+      <li><strong>Setup:</strong> aistudio.google.com හි Google Cloud Billing (Credit Card) එකක් සම්බන්ධ කරන්න.</li>
+      <li><strong>Pricing:</strong> Gemini 3.6 Flash හි වචන මිලියනයකට අයවන්නේ $0.075 (ඩොලර් ශත 7.5 ක්) පමණි! මුළු මාසික AI වියදම $1 - $3 (රු. 300 - 900) නොඉක්මවයි.</li>
+      <li><strong>Throughput:</strong> Rate limits මිනිත්තුවකට ඉල්ලීම් 1,000 ක් (1,000 RPM) දක්වා සීමාව වැඩිවේ.</li>
+    </ul>
+
+    <h2>6. Meta Business Verification <span>(නොමිලේ පණිවිඩ සහ සීමා)</span></h2>
+    <div class="callout">
+      <strong>🎉 Free Tier:</strong> Meta ආයතනය විසින් සෑම මසකම පාරිභෝගිකයන් අරඹන සංවාද <strong>1,000 ක් නොමිලේ (100% FREE)</strong> ලබාදෙයි! පාරිභෝගිකයා අමතා පැය 24 ක් යනතුරු නොමිලේ ඕනෑම මැසේජ් ප්‍රමාණයක් යැවිය හැක.
+    </div>
+
+    <h2>7. Implementation Roadmap Table <span>(සාරාංශ පිරික්සුම් ලැයිස්තුව)</span></h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Component (අංශය)</th>
+          <th>Action Required (ක්‍රියාමාර්ගය)</th>
+          <th>Monthly Cost (පිරිවැය)</th>
+          <th>Outcome (ප්‍රතිඵලය)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Meta System Token</td>
+          <td>Admin System User with 'Never' expire</td>
+          <td>Free (නොමිලේ)</td>
+          <td>Token expire වීම 100% ක් නතර වේ</td>
+        </tr>
+        <tr>
+          <td>Real Store Phone</td>
+          <td>Add real store SIM & SMS OTP verify</td>
+          <td>SIM මිල පමණි</td>
+          <td>ලොව පුරා පාරිභෝගිකයන්ට WhatsApp ඇමතිය හැක</td>
+        </tr>
+        <tr>
+          <td>Cloud Hosting</td>
+          <td>Deploy on Render / Railway</td>
+          <td>$5 - $7 / month</td>
+          <td>පරිගණකය Off කළද 24/7 සක්‍රියයි</td>
+        </tr>
+        <tr>
+          <td>Gemini AI Engine</td>
+          <td>Link Google AI Studio Billing</td>
+          <td>$1 - $3 / month</td>
+          <td>Quota limits නැතිව ක්ෂණික පිළිතුරු</td>
+        </tr>
+        <tr>
+          <td>Meta Verification</td>
+          <td>Submit Business BR Certificate</td>
+          <td>Free (නොමිලේ)</td>
+          <td>10,000+ දෛනික සීමාව & Green Tick</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

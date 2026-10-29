@@ -54,6 +54,36 @@ router.post('/', asyncHandler(async (req, res) => {
     client.release();
   }
 
+  // If sender is a human agent, dispatch to the customer's WhatsApp!
+  if (sender_type === 'human' || sender_type === 'agent') {
+    try {
+      const custRes = await pool.query(
+        `SELECT c.whatsapp_number, conv.channel 
+         FROM conversations conv 
+         JOIN customers c ON conv.customer_id = c.id 
+         WHERE conv.id = $1`,
+        [conversationId]
+      );
+      const customer = custRes.rows[0];
+      if (customer?.whatsapp_number) {
+        const { sendWhatsAppMessage } = require('../services/whatsappService');
+        const cleanPhone = String(customer.whatsapp_number).replace(/[^0-9]/g, '');
+        console.log(`Dispatching human agent reply to customer WhatsApp (+${cleanPhone})...`);
+        const waResult = await sendWhatsAppMessage(cleanPhone, content);
+        if (waResult?.messages?.[0]?.id) {
+          await pool.query(
+            'UPDATE messages SET external_message_id = $1 WHERE id = $2',
+            [waResult.messages[0].id, customerMessage.id]
+          );
+          console.log(`Human agent reply sent to WhatsApp: ${waResult.messages[0].id}`);
+        }
+      }
+    } catch (err) {
+      console.error('Error dispatching human agent message to WhatsApp:', err.message);
+    }
+    return res.status(201).json({ customerMessage, aiMessage: null, sentToWhatsApp: true });
+  }
+
   // Only trigger AI reply for incoming customer messages
   if (sender_type !== 'customer') {
     return res.status(201).json({ customerMessage, aiMessage: null });

@@ -226,3 +226,76 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* Sender Tags inside bubbles */
+.sender-tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  margin-bottom: 5px;
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.sender-tag.customer {
+  color: #166534;
+  background: rgba(22, 101, 52, 0.1);
+}
+
+.sender-tag.ai {
+  color: #2563eb;
+  background: rgba(37, 99, 235, 0.1);
+}
+
+.sender-tag.human {
+  color: #1e40af;
+  background: rgba(30, 64, 175, 0.15);
+}
+
+/* Chat Send Mode Bar */
+.chat-send-mode-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 20px;
+  background: #f1f5f9;
+  border-top: 1px solid #e2e8f0;
+  font-size: 12px;
+}
+
+.send-mode-label {
+  font-weight: 600;
+  color: #64748b;
+  margin-right: 4px;
+}
+
+.send-mode-pill {
+  padding: 5px 12px;
+  border-radius: 14px;
+  border: 1px solid #cbd5e1;
+  background: white;
+  color: #475569;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.send-mode-pill:hover {
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+.send-mode-pill.active-human {
+  background: #2563eb;
+  color: white;
+  border-color: #2563eb;
+  box-shadow: 0 1px 3px rgba(37, 99, 235, 0.3);
+}
+
+.send-mode-pill.active-customer {
+  background: #10b981;
+  color: white;
+  border-color: #10b981;
+  box-shadow: 0 1px 3px rgba(16, 185, 129, 0.3);
+}

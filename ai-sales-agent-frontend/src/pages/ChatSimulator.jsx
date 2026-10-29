@@ -18,6 +18,7 @@ function ChatSimulator() {
 
   const [newMessage, setNewMessage] = useState("");
   const [sending, setSending] = useState(false);
+  const [sendMode, setSendMode] = useState("human"); // 'human' (Send to WhatsApp) or 'customer' (Simulate)
 
   const [showNewConvModal, setShowNewConvModal] = useState(false);
   const [customers, setCustomers] = useState([]);
@@ -124,43 +125,44 @@ function ChatSimulator() {
 //     }
 //   };
     const handleSend = async (e) => {
-    e.preventDefault();
+      e.preventDefault();
 
-    // Guard: block if already sending, or message is empty/whitespace-only
-    if (sending || !newMessage.trim() || !selectedConvId) return;
+      // Guard: block if already sending, or message is empty/whitespace-only
+      if (sending || !newMessage.trim() || !selectedConvId) return;
 
-    const content = newMessage.trim();
-    setNewMessage("");
-    setSending(true); // disables the input + button immediately
+      const content = newMessage.trim();
+      const currentMode = sendMode;
+      setNewMessage("");
+      setSending(true);
 
-    const tempCustomerMsg = {
+      const tempMsg = {
         id: `temp-${Date.now()}`,
-        sender_type: "customer",
+        sender_type: currentMode,
         content,
         created_at: new Date().toISOString(),
-    };
-    setMessages((prev) => [...prev, tempCustomerMsg]);
+      };
+      setMessages((prev) => [...prev, tempMsg]);
 
-    try {
+      try {
         const res = await api.post(`/conversations/${selectedConvId}/messages`, {
-        sender_type: "customer",
-        content,
+          sender_type: currentMode,
+          content,
         });
 
         setMessages((prev) => {
-        const withoutTemp = prev.filter((m) => m.id !== tempCustomerMsg.id);
-        const newMsgs = [res.data.customerMessage];
-        if (res.data.aiMessage) newMsgs.push(res.data.aiMessage);
-        return [...withoutTemp, ...newMsgs];
+          const withoutTemp = prev.filter((m) => m.id !== tempMsg.id);
+          const newMsgs = [res.data.customerMessage];
+          if (res.data.aiMessage) newMsgs.push(res.data.aiMessage);
+          return [...withoutTemp, ...newMsgs];
         });
 
         fetchConversations();
-    } catch (err) {
+      } catch (err) {
         alert(err.response?.data?.error || "Failed to send message");
-        setMessages((prev) => prev.filter((m) => m.id !== tempCustomerMsg.id));
-    } finally {
-        setSending(false); // re-enable only after the request fully completes
-    }
+        setMessages((prev) => prev.filter((m) => m.id !== tempMsg.id));
+      } finally {
+        setSending(false);
+      }
     };
   // ===== NEW CONVERSATION MODAL =====
   const openNewConvModal = async () => {
@@ -298,6 +300,13 @@ function ChatSimulator() {
                       className={`chat-bubble-row ${msg.sender_type === "customer" ? "from-customer" : "from-agent"}`}
                     >
                       <div className={`chat-bubble ${msg.sender_type}`}>
+                        <span className={`sender-tag ${msg.sender_type}`}>
+                          {msg.sender_type === "human"
+                            ? "👤 Human Agent"
+                            : msg.sender_type === "ai"
+                            ? "🤖 AI Sales Agent"
+                            : "💬 Customer"}
+                        </span>
                         <p>{msg.content}</p>
                         <span className="chat-bubble-time">{formatTime(msg.created_at)}</span>
                       </div>
@@ -306,18 +315,53 @@ function ChatSimulator() {
                   <div ref={messagesEndRef} />
                 </div>
 
+                {/* SENDER MODE SELECTOR BAR */}
+                <div className="chat-send-mode-bar">
+                  <span className="send-mode-label">Mode:</span>
+                  <button
+                    type="button"
+                    className={`send-mode-pill ${sendMode === "human" ? "active-human" : ""}`}
+                    onClick={() => setSendMode("human")}
+                    title="Send a manual agent reply directly to the customer's WhatsApp"
+                  >
+                    👤 Human Agent (Reply to WhatsApp)
+                  </button>
+                  <button
+                    type="button"
+                    className={`send-mode-pill ${sendMode === "customer" ? "active-customer" : ""}`}
+                    onClick={() => setSendMode("customer")}
+                    title="Simulate an inbound customer inquiry to test AI responses"
+                  >
+                    🛍️ Test as Customer (Trigger AI)
+                  </button>
+                </div>
+
                 <form className="chat-input-bar" onSubmit={handleSend}>
-                <input
+                  <input
                     type="text"
-                    placeholder="Type a customer message..."
+                    placeholder={
+                      sendMode === "human"
+                        ? "Type a manual reply to send to customer's WhatsApp..."
+                        : "Type a customer inquiry to test AI..."
+                    }
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
                     disabled={sending}
                     autoComplete="off"
-                />
-                <button type="submit" disabled={sending || !newMessage.trim()}>
-                    {sending ? "Sending..." : "Send"}
-                </button>
+                  />
+                  <button
+                    type="submit"
+                    disabled={sending || !newMessage.trim()}
+                    style={{
+                      background: sendMode === "human" ? "#2563eb" : "#10b981",
+                    }}
+                  >
+                    {sending
+                      ? "Sending..."
+                      : sendMode === "human"
+                      ? "Send to WhatsApp 📤"
+                      : "Simulate Customer 🛍️"}
+                  </button>
                 </form>
               </>
             )}

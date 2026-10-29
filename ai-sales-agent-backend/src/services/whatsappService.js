@@ -5,7 +5,8 @@ const https = require('https');
  * Sends outbound WhatsApp messages via Meta Graph API v21.0
  */
 async function sendWhatsAppMessage(toPhone, textBody) {
-  require('dotenv').config();
+  const path = require('path');
+  require('dotenv').config({ path: path.resolve(__dirname, '../../.env'), override: true });
   const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID;
   const token = process.env.WHATSAPP_TOKEN;
 

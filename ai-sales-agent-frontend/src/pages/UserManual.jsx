@@ -54,6 +54,68 @@ function UserManual() {
                 <span className="quick-badge">🐘 PostgreSQL Database</span>
                 <span className="quick-badge">🇱🇰 Sinhala & English Multi-lingual</span>
               </div>
+
+              {/* ONE-CLICK DOWNLOADS */}
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', marginTop: '22px' }}>
+                <a
+                  href="/AI_Sales_Agent_Production_Guide_v2.docx"
+                  download="AI_Sales_Agent_Production_Guide.docx"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    background: '#2563eb',
+                    color: 'white',
+                    padding: '10px 18px',
+                    borderRadius: '8px',
+                    fontWeight: '600',
+                    fontSize: '13.5px',
+                    textDecoration: 'none',
+                    boxShadow: '0 2px 8px rgba(37, 99, 235, 0.4)',
+                  }}
+                >
+                  📥 Download Word Guide (.docx)
+                </a>
+                <a
+                  href="/AI_Sales_Agent_Platform_Presentation.pptx"
+                  download="AI_Sales_Agent_Platform_Presentation.pptx"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    background: '#0ea5e9',
+                    color: 'white',
+                    padding: '10px 18px',
+                    borderRadius: '8px',
+                    fontWeight: '600',
+                    fontSize: '13.5px',
+                    textDecoration: 'none',
+                    boxShadow: '0 2px 8px rgba(14, 165, 233, 0.4)',
+                  }}
+                >
+                  📊 Download Slides (.pptx)
+                </a>
+                <a
+                  href="/Production_Guide.html"
+                  target="_blank"
+                  rel="noreferrer"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    color: 'white',
+                    padding: '10px 18px',
+                    borderRadius: '8px',
+                    fontWeight: '600',
+                    fontSize: '13.5px',
+                    textDecoration: 'none',
+                    border: '1px solid rgba(255, 255, 255, 0.25)',
+                  }}
+                >
+                  🌐 Open in Browser / Print PDF
+                </a>
+              </div>
             </div>
 
             {/* TAB NAVIGATION */}
